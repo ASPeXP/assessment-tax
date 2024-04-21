@@ -133,4 +133,22 @@ func TestTax(t *testing.T){
 		got := b["tax"]
 		assert.Equal(t, want, got, "It's should return 324000.00 when I give 2100000.00")
 	})
+
+	t.Run("given amount  500000 with wht 25000 should return calculate tax as 4000.00", func(t *testing.T) {
+		amount := 500000.00
+		wht := 25000.00
+		personalDeducted := 60000.00
+
+		want := 4000.00
+		
+		tax := CalTax(amount, wht, personalDeducted)
+		var b map[string]float64
+		err:= json.Unmarshal([]byte(tax),&b)
+		if err != nil {
+			fmt.Println("error:", err)
+		}
+		
+		got := b["tax"]
+		assert.Equal(t, want, got, "It's should return 4000.00 when I give amount 500000.00 and wht 25000")
+	})
 }
