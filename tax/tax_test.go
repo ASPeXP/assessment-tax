@@ -86,7 +86,7 @@ func TestTax(t *testing.T){
 		wht := 0.0
 		personalDeducted := 60000.00
 
-		want := 109100.00
+		want := 101000.00
 		
 		tax := CalTax(amount, wht, personalDeducted)
 		var b map[string]float64
@@ -96,7 +96,7 @@ func TestTax(t *testing.T){
 		}
 		
 		got := b["tax"]
-		assert.Equal(t, want, got, "It's should return 109100.00 when I give 1000000.00")
+		assert.Equal(t, want, got, "It's should return 101000.00 when I give 1000000.00")
 	})
 	t.Run("given amount  1900000 should return calculate tax as 20% after deducted", func(t *testing.T) {
 		amount := 1900000.00
