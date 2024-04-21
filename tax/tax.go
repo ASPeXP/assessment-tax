@@ -8,6 +8,70 @@ type PersonalTaxInfo struct {
 	Income           float64
 	Wht              float64
 	PersonalDeducted float64
+	Donation	float64
+}
+
+func CalTaxPTI(pti PersonalTaxInfo) string {
+
+	pti.Income= (pti.Income - pti.PersonalDeducted) - pti.Donation
+	taxVal := 0.00 
+	if pti.Income > 2000000  {
+		pti.Income = pti.Income - 2000000
+		tax := pti.Income * 0.35
+		taxVal += tax
+
+		pti.Income = 2000000 - 1000000
+		tax = pti.Income * 0.20
+		taxVal += tax
+
+		pti.Income = 1000000 - 500000
+		tax = pti.Income * 0.15
+		taxVal += tax
+
+		pti.Income = 500000-150000
+		tax = pti.Income * 0.10
+		taxVal += tax 
+		taxVal -= pti.Wht
+		return fmt.Sprintf(`{"tax": %.2f }`, taxVal)
+	}
+
+	if pti.Income > 1000000 && pti.Income <= 2000000 {
+		pti.Income = pti.Income - 1000000
+		tax := pti.Income * 0.20
+		taxVal += tax
+
+		pti.Income = 1000000 - 500000
+		tax = pti.Income * 0.15
+		taxVal += tax
+
+		pti.Income = 500000-150000
+		tax = pti.Income * 0.10
+		taxVal += tax 
+		taxVal -= pti.Wht
+		return fmt.Sprintf(`{"tax": %.2f }`, taxVal)
+	}
+	if pti.Income > 500000 && pti.Income <= 1000000 {
+		pti.Income = pti.Income - 500000
+		tax := pti.Income * 0.15
+		taxVal += tax
+
+		pti.Income = 500000-150000
+		tax = pti.Income * 0.10
+		taxVal += tax 
+		taxVal -= pti.Wht
+		return fmt.Sprintf(`{"tax": %.2f }`, taxVal)
+	}
+	if pti.Income > 150000 && pti.Income <= 500000 {
+		pti.Income = pti.Income - 150000
+		tax := pti.Income * 0.10
+		taxVal += tax
+		taxVal -= pti.Wht
+		return fmt.Sprintf(`{"tax": %.2f }`, taxVal)
+	}
+	
+
+
+	return fmt.Sprintf(`{"tax": %.2f }`, taxVal)
 }
 
 func CalTax(amount float64, wht float64, personalDeducted float64) string {
