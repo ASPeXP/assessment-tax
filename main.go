@@ -60,15 +60,15 @@ func main() {
 		
 	})
 
-	var pti = tax.PersonalTaxInfo{
-			Income:           500000.0,
-			Wht:              0.0,
-			PersonalDeducted: 60000.0,
-			Donation:         100000.0,
-		}
-	bill := tax.CalTaxPTITaxLevel(pti)
+	// var pti = tax.PersonalTaxInfo{
+	// 		Income:           500000.0,
+	// 		Wht:              0.0,
+	// 		PersonalDeducted: 60000.0,
+	// 		Donation:         100000.0,
+	// 	}
+	// bill := tax.CalTaxPTITaxLevel(pti)
 
-	fmt.Println(bill)
+	// fmt.Println(bill)
 
 	serverPort := ":" + os.Getenv("PORT")
 	go func(){

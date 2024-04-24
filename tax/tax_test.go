@@ -24,7 +24,7 @@ func TestTax(t *testing.T) {
 		want := 0.0
 
 		// tax := CalTax(amount, wht, personalDeducted)
-		tax := CalTaxPTI(pti)
+		tax := CalTaxPTITaxLevel(pti)
 		var b map[string]float64
 		err := json.Unmarshal([]byte(tax), &b)
 		if err != nil {
@@ -48,7 +48,7 @@ func TestTax(t *testing.T) {
 
 		want := 29000.10
 		// tax := CalTax(amount, wht, personalDeducted)
-		tax := CalTaxPTI(pti)
+		tax := CalTaxPTITaxLevel(pti)
 		var b map[string]float64
 		err := json.Unmarshal([]byte(tax), &b)
 		if err != nil {
@@ -73,7 +73,7 @@ func TestTax(t *testing.T) {
 
 		want := 50000.00
 		// tax := CalTax(amount, wht, personalDeducted)
-		tax := CalTaxPTI(pti)
+		tax := CalTaxPTITaxLevel(pti)
 		var b map[string]float64
 		err := json.Unmarshal([]byte(tax), &b)
 		if err != nil {
@@ -98,7 +98,7 @@ func TestTax(t *testing.T) {
 		want := 29000.00
 
 		// tax := CalTax(amount, wht, personalDeducted)
-		tax := CalTaxPTI(pti)
+		tax := CalTaxPTITaxLevel(pti)
 		var b map[string]float64
 		err := json.Unmarshal([]byte(tax), &b)
 		if err != nil {
@@ -124,7 +124,7 @@ func TestTax(t *testing.T) {
 		want := 101000.00
 
 		// tax := CalTax(amount, wht, personalDeducted)
-		tax := CalTaxPTI(pti)
+		tax := CalTaxPTITaxLevel(pti)
 		var b map[string]float64
 		err := json.Unmarshal([]byte(tax), &b)
 		if err != nil {
@@ -149,7 +149,7 @@ func TestTax(t *testing.T) {
 		want := 278000.00
 
 		// tax := CalTax(amount, wht, personalDeducted)
-		tax := CalTaxPTI(pti)
+		tax := CalTaxPTITaxLevel(pti)
 		var b map[string]float64
 		err := json.Unmarshal([]byte(tax), &b)
 		if err != nil {
@@ -174,7 +174,7 @@ func TestTax(t *testing.T) {
 		want := 324000.00
 
 		// tax := CalTax(amount, wht, personalDeducted)
-		tax := CalTaxPTI(pti)
+		tax := CalTaxPTITaxLevel(pti)
 		var b map[string]float64
 		err := json.Unmarshal([]byte(tax), &b)
 		if err != nil {
@@ -199,7 +199,7 @@ func TestTax(t *testing.T) {
 		want := 0.0
 
 		// tax := CalTax(amount, wht, personalDeducted)
-		tax := CalTaxPTI(pti)
+		tax := CalTaxPTITaxLevel(pti)
 		var b map[string]float64
 		err := json.Unmarshal([]byte(tax), &b)
 		if err != nil {
@@ -223,7 +223,7 @@ func TestTax(t *testing.T) {
 
 		want := 4000.10
 		// tax := CalTax(amount, wht, personalDeducted)
-		tax := CalTaxPTI(pti)
+		tax := CalTaxPTITaxLevel(pti)
 		var b map[string]float64
 		err := json.Unmarshal([]byte(tax), &b)
 		if err != nil {
@@ -247,7 +247,7 @@ func TestTax(t *testing.T) {
 		want := 4000.00
 
 		// tax := CalTax(amount, wht, personalDeducted)
-		tax := CalTaxPTI(pti)
+		tax := CalTaxPTITaxLevel(pti)
 		var b map[string]float64
 		err := json.Unmarshal([]byte(tax), &b)
 		if err != nil {
@@ -271,7 +271,7 @@ func TestTax(t *testing.T) {
 
 		want := 25000.00
 		// tax := CalTax(amount, wht, personalDeducted)
-		tax := CalTaxPTI(pti)
+		tax := CalTaxPTITaxLevel(pti)
 		var b map[string]float64
 		err := json.Unmarshal([]byte(tax), &b)
 		if err != nil {
@@ -295,7 +295,7 @@ func TestTax(t *testing.T) {
 		want := 76000.00
 
 		// tax := CalTax(amount, wht, personalDeducted)
-		tax := CalTaxPTI(pti)
+		tax := CalTaxPTITaxLevel(pti)
 		var b map[string]float64
 		err := json.Unmarshal([]byte(tax), &b)
 		if err != nil {
@@ -320,7 +320,7 @@ func TestTax(t *testing.T) {
 		want := 253000.00
 
 		// tax := CalTax(amount, wht, personalDeducted)
-		tax := CalTaxPTI(pti)
+		tax := CalTaxPTITaxLevel(pti)
 		var b map[string]float64
 		err := json.Unmarshal([]byte(tax), &b)
 		if err != nil {
@@ -345,7 +345,7 @@ func TestTax(t *testing.T) {
 		want := 299000.00
 
 		// tax := CalTax(amount, wht, personalDeducted)
-		tax := CalTaxPTI(pti)
+		tax := CalTaxPTITaxLevel(pti)
 		var b map[string]float64
 		err := json.Unmarshal([]byte(tax), &b)
 		if err != nil {
@@ -370,7 +370,7 @@ func TestTax(t *testing.T) {
 
 		want := 19000.00
 
-		tax := CalTaxPTI(pti)
+		tax := CalTaxPTITaxLevel(pti)
 		var b map[string]float64
 		err := json.Unmarshal([]byte(tax), &b)
 		if err != nil {
@@ -421,3 +421,43 @@ func TestTaxWithAmount2100000WithResponseBody(t *testing.T) {
 
 	
 }
+
+func TestTaxWithAmount1900000WithResponseBody(t *testing.T) {
+	var pti = PersonalTaxInfo{
+			Income:           1900000.0,
+			Wht:              0.0,
+			PersonalDeducted: 60000.0,
+			Donation:         0.0,
+		}
+	bill := CalTaxPTITaxLevel(pti)
+	exp := `{"tax": 278000.0,"taxLevel": [{"level": "2,000,001 ขึ้นไป","tax": 0.0},{"level": "1,000,001-2,000,000","tax": 168000.0},{"level": "500,001-1,000,000","tax": 75000.0},{"level": "150,001-500,000","tax": 35000.0},{"level": "0-150,000","tax": 0.0}]}`
+
+	bill = strings.TrimSpace(bill)
+	exp = strings.ReplaceAll(exp, "\n", "")
+	exp = strings.TrimSpace(exp)
+	if exp != bill {
+		t.Errorf("expect %q but got %q", exp, bill)
+	}
+
+	
+}
+func TestTaxWithAmount1000000WithResponseBody(t *testing.T) {
+	var pti = PersonalTaxInfo{
+			Income:           1000000.0,
+			Wht:              0.00,
+			PersonalDeducted: 60000.0,
+			Donation:         0.0,
+		}
+	bill := CalTaxPTITaxLevel(pti)
+	exp := `{"tax": 101000.0,"taxLevel": [{"level": "2,000,001 ขึ้นไป","tax": 0.0},{"level": "1,000,001-2,000,000","tax": 0.0},{"level": "500,001-1,000,000","tax": 66000.0},{"level": "150,001-500,000","tax": 35000.0},{"level": "0-150,000","tax": 0.0}]}`
+
+	bill = strings.TrimSpace(bill)
+	exp = strings.ReplaceAll(exp, "\n", "")
+	exp = strings.TrimSpace(exp)
+	if exp != bill {
+		t.Errorf("expect %q but got %q", exp, bill)
+	}
+
+	
+}
+
