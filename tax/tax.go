@@ -248,10 +248,6 @@ func CalTaxPTITaxLevel(pti PersonalTaxInfo) string {
 
 	return fmt.Sprintf(`{"tax": %.1f,"taxLevel": %s}`, taxVal, bodyStr)
 }
-func PersonalDeduct(amount float64) string {
-	retAmount := 70000.0
-	return fmt.Sprintf(`{"personalDeduction": %.1f}`, retAmount )
-}
 
 // func CalTaxPTI(pti PersonalTaxInfo) string {
 

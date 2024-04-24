@@ -8,6 +8,7 @@ import (
 	"os/signal"
 	"syscall"
 
+	// "github.com/aspexp/assessment-tax/postgres"
 	"github.com/aspexp/assessment-tax/tax"
 	_ "github.com/joho/godotenv/autoload"
 	"github.com/labstack/echo/v4"
@@ -25,6 +26,7 @@ type Allowance struct {
  
 }
 
+
 type PDRequestBody struct {
 	Amount float64 `json:"amount"`
 }
@@ -38,6 +40,7 @@ func main() {
 
 	stop := make(chan os.Signal, 1)
 	signal.Notify(stop, os.Interrupt, syscall.SIGTERM)
+
 
 	e.GET("/", func(c echo.Context) error {
 		return c.String(http.StatusOK, "Hello, Go Bootcamp!")
@@ -68,8 +71,8 @@ func main() {
 		if err != nil {
 			return c.String(http.StatusBadRequest, err.Error()) 
 		}
-		fmt.Println(pd)
-		retStr := fmt.Sprintf(`{"personalDeduction": %.1f }`, pd.Amount)
+		retStr := tax.InsertPersonalDeduct(pd.Amount)
+
 		return c.JSON(http.StatusOK,retStr)
 	})
 

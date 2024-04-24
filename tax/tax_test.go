@@ -9,23 +9,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestPOSTPersonal(t *testing.T) {
 
-	t.Run("given amount not more than 150000 should return calculate tax as zero", func(t *testing.T) {
-		amount := 70000.0
-		want := amount
-		pd := PersonalDeduct(amount)
-		var b map[string]float64
-		err := json.Unmarshal([]byte(pd), &b)
-		if err != nil {
-			fmt.Println("error:", err)
-		}
-		
-		got := b["personalDeduction"]
-		assert.Equal(t, want, got, "It's should return 70000.0 when I give 70000.0")
-	})
-	
-}
 func TestTax(t *testing.T) {
 
 	t.Run("given amount not more than 150000 should return calculate tax as zero", func(t *testing.T) {
