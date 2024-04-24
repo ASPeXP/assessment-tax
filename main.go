@@ -8,6 +8,7 @@ import (
 	"os/signal"
 	"syscall"
 
+	// "github.com/aspexp/assessment-tax/postgres"
 	"github.com/aspexp/assessment-tax/tax"
 	_ "github.com/joho/godotenv/autoload"
 	"github.com/labstack/echo/v4"
@@ -23,7 +24,11 @@ type Allowance struct {
 	Type string  `json:"allowanceType"`
 	Amount float64 `json:"amount"`
  
-  
+}
+
+
+type PDRequestBody struct {
+	Amount float64 `json:"amount"`
 }
 func main() {
 	
@@ -35,6 +40,7 @@ func main() {
 
 	stop := make(chan os.Signal, 1)
 	signal.Notify(stop, os.Interrupt, syscall.SIGTERM)
+
 
 	e.GET("/", func(c echo.Context) error {
 		return c.String(http.StatusOK, "Hello, Go Bootcamp!")
@@ -59,16 +65,16 @@ func main() {
 		return c.JSON(http.StatusOK, result )
 		
 	})
+	e.POST("/admin/deductions/personal", func( c echo.Context) error {
+		var pd PDRequestBody 
+		err := c.Bind(&pd)
+		if err != nil {
+			return c.String(http.StatusBadRequest, err.Error()) 
+		}
+		retStr := tax.InsertPersonalDeduct(pd.Amount)
 
-	// var pti = tax.PersonalTaxInfo{
-	// 		Income:           500000.0,
-	// 		Wht:              0.0,
-	// 		PersonalDeducted: 60000.0,
-	// 		Donation:         100000.0,
-	// 	}
-	// bill := tax.CalTaxPTITaxLevel(pti)
-
-	// fmt.Println(bill)
+		return c.JSON(http.StatusOK,retStr)
+	})
 
 	serverPort := ":" + os.Getenv("PORT")
 	go func(){
