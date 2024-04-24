@@ -23,7 +23,10 @@ type Allowance struct {
 	Type string  `json:"allowanceType"`
 	Amount float64 `json:"amount"`
  
-  
+}
+
+type PDRequestBody struct {
+	Amount float64 `json:"amount"`
 }
 func main() {
 	
@@ -59,16 +62,16 @@ func main() {
 		return c.JSON(http.StatusOK, result )
 		
 	})
-
-	// var pti = tax.PersonalTaxInfo{
-	// 		Income:           500000.0,
-	// 		Wht:              0.0,
-	// 		PersonalDeducted: 60000.0,
-	// 		Donation:         100000.0,
-	// 	}
-	// bill := tax.CalTaxPTITaxLevel(pti)
-
-	// fmt.Println(bill)
+	e.POST("/admin/deductions/personal", func( c echo.Context) error {
+		var pd PDRequestBody 
+		err := c.Bind(&pd)
+		if err != nil {
+			return c.String(http.StatusBadRequest, err.Error()) 
+		}
+		fmt.Println(pd)
+		retStr := fmt.Sprintf(`{"personalDeduction": %.1f }`, pd.Amount)
+		return c.JSON(http.StatusOK,retStr)
+	})
 
 	serverPort := ":" + os.Getenv("PORT")
 	go func(){

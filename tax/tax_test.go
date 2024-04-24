@@ -9,6 +9,23 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestPOSTPersonal(t *testing.T) {
+
+	t.Run("given amount not more than 150000 should return calculate tax as zero", func(t *testing.T) {
+		amount := 70000.0
+		want := amount
+		pd := PersonalDeduct(amount)
+		var b map[string]float64
+		err := json.Unmarshal([]byte(pd), &b)
+		if err != nil {
+			fmt.Println("error:", err)
+		}
+		
+		got := b["personalDeduction"]
+		assert.Equal(t, want, got, "It's should return 70000.0 when I give 70000.0")
+	})
+	
+}
 func TestTax(t *testing.T) {
 
 	t.Run("given amount not more than 150000 should return calculate tax as zero", func(t *testing.T) {
@@ -23,15 +40,22 @@ func TestTax(t *testing.T) {
 		}
 		want := 0.0
 
-		// tax := CalTax(amount, wht, personalDeducted)
 		tax := CalTaxPTITaxLevel(pti)
-		var b map[string]float64
-		err := json.Unmarshal([]byte(tax), &b)
+		var taxData TaxData
+		err := json.Unmarshal([]byte(tax), &taxData)
 		if err != nil {
 			fmt.Println("error:", err)
 		}
+		got := taxData.Tax
+		// tax := CalTax(amount, wht, personalDeducted)
+		// tax := CalTaxPTI(pti)
+		// var b map[string]float64
+		// err := json.Unmarshal([]byte(tax), &b)
+		// if err != nil {
+		// 	fmt.Println("error:", err)
+		// }
 
-		got := b["tax"]
+		// got := b["tax"]
 		assert.Equal(t, want, got, "It's should return 0 when I give 149999")
 	})
 
@@ -47,15 +71,23 @@ func TestTax(t *testing.T) {
 		}
 
 		want := 29000.10
-		// tax := CalTax(amount, wht, personalDeducted)
+
 		tax := CalTaxPTITaxLevel(pti)
-		var b map[string]float64
-		err := json.Unmarshal([]byte(tax), &b)
+		var taxData TaxData
+		err := json.Unmarshal([]byte(tax), &taxData)
 		if err != nil {
 			fmt.Println("error:", err)
 		}
+		got := taxData.Tax
+		// tax := CalTax(amount, wht, personalDeducted)
+		// tax := CalTaxPTI(pti)
+		// var b map[string]float64
+		// err := json.Unmarshal([]byte(tax), &b)
+		// if err != nil {
+		// 	fmt.Println("error:", err)
+		// }
 
-		got := b["tax"]
+		// got := b["tax"]
 		assert.Equal(t, want, got, "It's should return 29000.10 when I give 500001.00")
 	})
 
@@ -72,15 +104,23 @@ func TestTax(t *testing.T) {
 		}
 
 		want := 50000.00
-		// tax := CalTax(amount, wht, personalDeducted)
+
 		tax := CalTaxPTITaxLevel(pti)
-		var b map[string]float64
-		err := json.Unmarshal([]byte(tax), &b)
+		var taxData TaxData
+		err := json.Unmarshal([]byte(tax), &taxData)
 		if err != nil {
 			fmt.Println("error:", err)
 		}
+		got := taxData.Tax
+		// tax := CalTax(amount, wht, personalDeducted)
+		// tax := CalTaxPTI(pti)
+		// var b map[string]float64
+		// err := json.Unmarshal([]byte(tax), &b)
+		// if err != nil {
+		// 	fmt.Println("error:", err)
+		// }
 
-		got := b["tax"]
+		// got := b["tax"]
 		assert.Equal(t, want, got, "It's should return 50000.00 when I give 660000.00")
 	})
 
@@ -97,15 +137,22 @@ func TestTax(t *testing.T) {
 
 		want := 29000.00
 
-		// tax := CalTax(amount, wht, personalDeducted)
 		tax := CalTaxPTITaxLevel(pti)
-		var b map[string]float64
-		err := json.Unmarshal([]byte(tax), &b)
+		var taxData TaxData
+		err := json.Unmarshal([]byte(tax), &taxData)
 		if err != nil {
 			fmt.Println("error:", err)
 		}
+		got := taxData.Tax
+		// tax := CalTax(amount, wht, personalDeducted)
+		// tax := CalTaxPTI(pti)
+		// var b map[string]float64
+		// err := json.Unmarshal([]byte(tax), &b)
+		// if err != nil {
+		// 	fmt.Println("error:", err)
+		// }
 
-		got := b["tax"]
+		// got := b["tax"]
 		assert.Equal(t, want, got, "It's should return 29000.00 when I give 500000.00")
 	})
 
@@ -123,15 +170,22 @@ func TestTax(t *testing.T) {
 
 		want := 101000.00
 
-		// tax := CalTax(amount, wht, personalDeducted)
 		tax := CalTaxPTITaxLevel(pti)
-		var b map[string]float64
-		err := json.Unmarshal([]byte(tax), &b)
+		var taxData TaxData
+		err := json.Unmarshal([]byte(tax), &taxData)
 		if err != nil {
 			fmt.Println("error:", err)
 		}
+		got := taxData.Tax
+		// tax := CalTax(amount, wht, personalDeducted)
+		// tax := CalTaxPTI(pti)
+		// var b map[string]float64
+		// err := json.Unmarshal([]byte(tax), &b)
+		// if err != nil {
+		// 	fmt.Println("error:", err)
+		// }
 
-		got := b["tax"]
+		// got := b["tax"]
 		assert.Equal(t, want, got, "It's should return 101000.00 when I give 1000000.00")
 	})
 	t.Run("given amount  1900000 should return calculate tax as 20% after deducted", func(t *testing.T) {
@@ -148,15 +202,22 @@ func TestTax(t *testing.T) {
 
 		want := 278000.00
 
-		// tax := CalTax(amount, wht, personalDeducted)
 		tax := CalTaxPTITaxLevel(pti)
-		var b map[string]float64
-		err := json.Unmarshal([]byte(tax), &b)
+		var taxData TaxData
+		err := json.Unmarshal([]byte(tax), &taxData)
 		if err != nil {
 			fmt.Println("error:", err)
 		}
+		got := taxData.Tax
+		// tax := CalTax(amount, wht, personalDeducted)
+		// tax := CalTaxPTI(pti)
+		// var b map[string]float64
+		// err := json.Unmarshal([]byte(tax), &b)
+		// if err != nil {
+		// 	fmt.Println("error:", err)
+		// }
 
-		got := b["tax"]
+		// got := b["tax"]
 		assert.Equal(t, want, got, "It's should return 278000.00 when I give 1900000.00")
 	})
 
@@ -173,15 +234,22 @@ func TestTax(t *testing.T) {
 
 		want := 324000.00
 
-		// tax := CalTax(amount, wht, personalDeducted)
 		tax := CalTaxPTITaxLevel(pti)
-		var b map[string]float64
-		err := json.Unmarshal([]byte(tax), &b)
+		var taxData TaxData
+		err := json.Unmarshal([]byte(tax), &taxData)
 		if err != nil {
 			fmt.Println("error:", err)
 		}
+		got := taxData.Tax
+		// tax := CalTax(amount, wht, personalDeducted)
+		// tax := CalTaxPTI(pti)
+		// var b map[string]float64
+		// err := json.Unmarshal([]byte(tax), &b)
+		// if err != nil {
+		// 	fmt.Println("error:", err)
+		// }
 
-		got := b["tax"]
+		// got := b["tax"]
 		assert.Equal(t, want, got, "It's should return 324000.00 when I give 2100000.00")
 	})
 
@@ -198,15 +266,22 @@ func TestTax(t *testing.T) {
 
 		want := 0.0
 
-		// tax := CalTax(amount, wht, personalDeducted)
 		tax := CalTaxPTITaxLevel(pti)
-		var b map[string]float64
-		err := json.Unmarshal([]byte(tax), &b)
+		var taxData TaxData
+		err := json.Unmarshal([]byte(tax), &taxData)
 		if err != nil {
 			fmt.Println("error:", err)
 		}
+		got := taxData.Tax
+		// tax := CalTax(amount, wht, personalDeducted)
+		// tax := CalTaxPTI(pti)
+		// var b map[string]float64
+		// err := json.Unmarshal([]byte(tax), &b)
+		// if err != nil {
+		// 	fmt.Println("error:", err)
+		// }
 
-		got := b["tax"]
+		// got := b["tax"]
 		assert.Equal(t, want, got, "It's should return 0 when I give 149999 with wht 25000")
 	})
 
@@ -222,15 +297,22 @@ func TestTax(t *testing.T) {
 		}
 
 		want := 4000.10
-		// tax := CalTax(amount, wht, personalDeducted)
 		tax := CalTaxPTITaxLevel(pti)
-		var b map[string]float64
-		err := json.Unmarshal([]byte(tax), &b)
+		var taxData TaxData
+		err := json.Unmarshal([]byte(tax), &taxData)
 		if err != nil {
 			fmt.Println("error:", err)
 		}
+		got := taxData.Tax
+		// tax := CalTax(amount, wht, personalDeducted)
+		// tax := CalTaxPTI(pti)
+		// var b map[string]float64
+		// err := json.Unmarshal([]byte(tax), &b)
+		// if err != nil {
+		// 	fmt.Println("error:", err)
+		// }
 
-		got := b["tax"]
+		// got := b["tax"]
 		assert.Equal(t, want, got, "It's should return 4000.10 when I give 500001.00")
 	})
 	t.Run("given amount  500000 with wht 25000 should return calculate tax as 4000.00", func(t *testing.T) {
@@ -246,15 +328,22 @@ func TestTax(t *testing.T) {
 
 		want := 4000.00
 
-		// tax := CalTax(amount, wht, personalDeducted)
 		tax := CalTaxPTITaxLevel(pti)
-		var b map[string]float64
-		err := json.Unmarshal([]byte(tax), &b)
+		var taxData TaxData
+		err := json.Unmarshal([]byte(tax), &taxData)
 		if err != nil {
 			fmt.Println("error:", err)
 		}
+		got := taxData.Tax
+		// tax := CalTax(amount, wht, personalDeducted)
+		// tax := CalTaxPTI(pti)
+		// var b map[string]float64
+		// err := json.Unmarshal([]byte(tax), &b)
+		// if err != nil {
+		// 	fmt.Println("error:", err)
+		// }
 
-		got := b["tax"]
+		// got := b["tax"]
 		assert.Equal(t, want, got, "It's should return 4000.00 when I give amount 500000.00 and wht 25000")
 	})
 
@@ -270,15 +359,23 @@ func TestTax(t *testing.T) {
 		}
 
 		want := 25000.00
-		// tax := CalTax(amount, wht, personalDeducted)
+
 		tax := CalTaxPTITaxLevel(pti)
-		var b map[string]float64
-		err := json.Unmarshal([]byte(tax), &b)
+		var taxData TaxData
+		err := json.Unmarshal([]byte(tax), &taxData)
 		if err != nil {
 			fmt.Println("error:", err)
 		}
+		got := taxData.Tax
+		// tax := CalTax(amount, wht, personalDeducted)
+		// tax := CalTaxPTI(pti)
+		// var b map[string]float64
+		// err := json.Unmarshal([]byte(tax), &b)
+		// if err != nil {
+		// 	fmt.Println("error:", err)
+		// }
 
-		got := b["tax"]
+		// got := b["tax"]
 		assert.Equal(t, want, got, "It's should return 25000.00 when I give 660000.00 with 25000 wht")
 	})
 	t.Run("given amount  1000000 with wht 25000 should return calculate tax as 76000", func(t *testing.T) {
@@ -294,15 +391,23 @@ func TestTax(t *testing.T) {
 
 		want := 76000.00
 
-		// tax := CalTax(amount, wht, personalDeducted)
 		tax := CalTaxPTITaxLevel(pti)
-		var b map[string]float64
-		err := json.Unmarshal([]byte(tax), &b)
+		var taxData TaxData
+		err := json.Unmarshal([]byte(tax), &taxData)
 		if err != nil {
 			fmt.Println("error:", err)
 		}
+		got := taxData.Tax
 
-		got := b["tax"]
+		// tax := CalTax(amount, wht, personalDeducted)
+		// tax := CalTaxPTI(pti)
+		// var b map[string]float64
+		// err := json.Unmarshal([]byte(tax), &b)
+		// if err != nil {
+		// 	fmt.Println("error:", err)
+		// }
+
+		// got := b["tax"]
 		assert.Equal(t, want, got, "It's should return 76000.00 when I give 1000000.00 with wht 25000")
 	})
 
@@ -319,15 +424,14 @@ func TestTax(t *testing.T) {
 
 		want := 253000.00
 
-		// tax := CalTax(amount, wht, personalDeducted)
 		tax := CalTaxPTITaxLevel(pti)
-		var b map[string]float64
-		err := json.Unmarshal([]byte(tax), &b)
+		var taxData TaxData
+		err := json.Unmarshal([]byte(tax), &taxData)
 		if err != nil {
 			fmt.Println("error:", err)
 		}
-
-		got := b["tax"]
+		got := taxData.Tax
+		
 		assert.Equal(t, want, got, "It's should return 253000.00 when I give 1900000.00")
 	})
 
@@ -344,19 +448,17 @@ func TestTax(t *testing.T) {
 
 		want := 299000.00
 
-		// tax := CalTax(amount, wht, personalDeducted)
 		tax := CalTaxPTITaxLevel(pti)
-		var b map[string]float64
-		err := json.Unmarshal([]byte(tax), &b)
+		var taxData TaxData
+		err := json.Unmarshal([]byte(tax), &taxData)
 		if err != nil {
 			fmt.Println("error:", err)
 		}
-
-		got := b["tax"]
+		got := taxData.Tax
 		assert.Equal(t, want, got, "It's should return 299000.00 when I give 2100000.00 with 25000 wht")
 	})
 
-	t.Run("given amount  500000 with donation 100000 should return calculate tax as 19000", func(t *testing.T) {
+	t.Run("given amount 500000 with donation 100000 should return calculate tax as 19000", func(t *testing.T) {
 		// amount := 500000.00
 		// wht := 0.00
 		// personalDeducted := 60000.00
@@ -369,15 +471,13 @@ func TestTax(t *testing.T) {
 		}
 
 		want := 19000.00
-
 		tax := CalTaxPTITaxLevel(pti)
-		var b map[string]float64
-		err := json.Unmarshal([]byte(tax), &b)
+		var taxData TaxData
+		err := json.Unmarshal([]byte(tax), &taxData)
 		if err != nil {
 			fmt.Println("error:", err)
 		}
-
-		got := b["tax"]
+		got := taxData.Tax
 		assert.Equal(t, want, got, "It's should return 19000.00 when I give 500000.00 with 100000 donation")
 	})
 }

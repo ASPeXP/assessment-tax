@@ -11,17 +11,21 @@ type PersonalTaxInfo struct {
 	Donation         float64
 }
 
-type TaxLevel struct {
-	level string 
-	tax float64
+type TaxData struct {
+	Tax float64 `json:"tax"`
+	TaxLevel []TaxLevel `json:"taxLevel"`
 }
+type TaxLevel struct {
+	Level string `json:"level"`
+	Tax float64	`json:"tax"`
+}
+
 
 func getLevelTax(tlv []TaxLevel) string {
 	var s string 
 	
 	for _, t := range tlv {
-		s += fmt.Sprintf(`{"level": "%s","tax": %.1f},`,  t.level, t.tax)
-		// s += fmt.Sprintf(`{"level": "%s","tax": %.1f}`,  t.level, t.tax)
+		s += fmt.Sprintf(`{"level": "%s","tax": %.1f},`,  t.Level, t.Tax)
 	}
 
 	return 	s[:len(s)-1]
@@ -44,8 +48,8 @@ func CalTaxPTITaxLevel(pti PersonalTaxInfo) string {
 		tax := pti.Income * 0.35
 		taxVal += tax
 		tl := TaxLevel{
-			level: "2,000,001 ขึ้นไป",
-			tax: tax,
+			Level: "2,000,001 ขึ้นไป",
+			Tax: tax,
 		}
 		tlv = append(tlv, tl)
 
@@ -53,8 +57,8 @@ func CalTaxPTITaxLevel(pti PersonalTaxInfo) string {
 		tax = pti.Income * 0.20
 		taxVal += tax
 		tl = TaxLevel{
-			level: "1,000,001-2,000,000",
-			tax: tax,
+			Level: "1,000,001-2,000,000",
+			Tax: tax,
 		}
 		tlv = append(tlv, tl)
 
@@ -62,8 +66,8 @@ func CalTaxPTITaxLevel(pti PersonalTaxInfo) string {
 		tax = pti.Income * 0.15
 		taxVal += tax
 		tl = TaxLevel{
-			level: "500,001-1,000,000",
-			tax: tax,
+			Level: "500,001-1,000,000",
+			Tax: tax,
 		}
 		tlv = append(tlv, tl)
 
@@ -71,14 +75,14 @@ func CalTaxPTITaxLevel(pti PersonalTaxInfo) string {
 		tax = pti.Income * 0.10
 		taxVal += tax
 		tl = TaxLevel{
-			level: "150,001-500,000",
-			tax: tax,
+			Level: "150,001-500,000",
+			Tax: tax,
 		}
 		tlv = append(tlv, tl)
 
 		tl = TaxLevel{
-			level: "0-150,000",
-			tax: 0.0,
+			Level: "0-150,000",
+			Tax: 0.0,
 		}
 		tlv = append(tlv, tl)
 		
@@ -93,8 +97,8 @@ func CalTaxPTITaxLevel(pti PersonalTaxInfo) string {
 		
 
 		tl := TaxLevel{
-			level: "2,000,001 ขึ้นไป",
-			tax: 0.0,
+			Level: "2,000,001 ขึ้นไป",
+			Tax: 0.0,
 		}
 		tlv = append(tlv, tl)
 
@@ -102,8 +106,8 @@ func CalTaxPTITaxLevel(pti PersonalTaxInfo) string {
 		tax := pti.Income * 0.20
 		taxVal += tax
 		tl = TaxLevel{
-			level: "1,000,001-2,000,000",
-			tax: tax,
+			Level: "1,000,001-2,000,000",
+			Tax: tax,
 		}
 		tlv = append(tlv, tl)
 
@@ -111,8 +115,8 @@ func CalTaxPTITaxLevel(pti PersonalTaxInfo) string {
 		tax = pti.Income * 0.15
 		taxVal += tax
 		tl = TaxLevel{
-			level: "500,001-1,000,000",
-			tax: tax,
+			Level: "500,001-1,000,000",
+			Tax: tax,
 		}
 		tlv = append(tlv, tl)
 
@@ -121,14 +125,14 @@ func CalTaxPTITaxLevel(pti PersonalTaxInfo) string {
 		taxVal += tax
 		taxVal -= pti.Wht
 		tl = TaxLevel{
-			level: "150,001-500,000",
-			tax: tax,
+			Level: "150,001-500,000",
+			Tax: tax,
 		}
 		tlv = append(tlv, tl)
 
 		tl = TaxLevel{
-			level: "0-150,000",
-			tax: 0.0,
+			Level: "0-150,000",
+			Tax: 0.0,
 		}
 		tlv = append(tlv, tl)
 		// bodyStr += getLevelTax(tlv)
@@ -138,14 +142,14 @@ func CalTaxPTITaxLevel(pti PersonalTaxInfo) string {
 	if pti.Income > 500000 && pti.Income <= 1000000 {
 
 		tl := TaxLevel{
-			level: "2,000,001 ขึ้นไป",
-			tax: 0.0,
+			Level: "2,000,001 ขึ้นไป",
+			Tax: 0.0,
 		}
 		tlv = append(tlv, tl)
 
 		tl = TaxLevel{
-			level: "1,000,001-2,000,000",
-			tax: 0.0,
+			Level: "1,000,001-2,000,000",
+			Tax: 0.0,
 		}
 		tlv = append(tlv, tl)
 
@@ -159,8 +163,8 @@ func CalTaxPTITaxLevel(pti PersonalTaxInfo) string {
 		tax := pti.Income * 0.15
 		taxVal += tax
 		tl = TaxLevel{
-			level: "500,001-1,000,000",
-			tax: tax,
+			Level: "500,001-1,000,000",
+			Tax: tax,
 		}
 		tlv = append(tlv, tl)
 
@@ -169,15 +173,15 @@ func CalTaxPTITaxLevel(pti PersonalTaxInfo) string {
 		taxVal += tax
 		taxVal -= pti.Wht
 		tl = TaxLevel{
-			level: "150,001-500,000",
-			tax: tax,
+			Level: "150,001-500,000",
+			Tax: tax,
 		}
 		tlv = append(tlv, tl)
 
 		
 		tl = TaxLevel{
-			level: "0-150,000",
-			tax: 0.0,
+			Level: "0-150,000",
+			Tax: 0.0,
 		}
 		tlv = append(tlv, tl)
 		
@@ -189,20 +193,20 @@ func CalTaxPTITaxLevel(pti PersonalTaxInfo) string {
 	if pti.Income > 150000 && pti.Income <= 500000 {
 	
 		tl := TaxLevel{
-			level: "2,000,001 ขึ้นไป",
-			tax: taxZero,
+			Level: "2,000,001 ขึ้นไป",
+			Tax: taxZero,
 		}
 		tlv = append(tlv, tl)
 
 		tl = TaxLevel{
-			level: "1,000,001-2,000,000",
-			tax: taxZero,
+			Level: "1,000,001-2,000,000",
+			Tax: taxZero,
 		}
 		tlv = append(tlv, tl)
 
 		tl = TaxLevel{
-			level: "500,001-1,000,000",
-			tax: taxZero,
+			Level: "500,001-1,000,000",
+			Tax: taxZero,
 		}
 		tlv = append(tlv, tl)
 
@@ -211,14 +215,14 @@ func CalTaxPTITaxLevel(pti PersonalTaxInfo) string {
 		taxVal += tax
 		taxVal -= pti.Wht
 		tl = TaxLevel{
-			level: "150,001-500,000",
-			tax: tax,
+			Level: "150,001-500,000",
+			Tax: tax,
 		}
 		tlv = append(tlv, tl)
 
 		tl = TaxLevel{
-		level: "0-150,000",
-		tax: taxZero,
+		Level: "0-150,000",
+		Tax: taxZero,
 		}
 		tlv = append(tlv, tl)
 		
@@ -232,8 +236,8 @@ func CalTaxPTITaxLevel(pti PersonalTaxInfo) string {
 		taxVal += tax
 		// taxVal -= pti.Wht
 		tl := TaxLevel{
-			level: "0-150,000",
-			tax: tax,
+			Level: "0-150,000",
+			Tax: tax,
 		}
 		tlv = append(tlv, tl)
 		// bodyStr += getLevelTax(tlv)
@@ -243,6 +247,10 @@ func CalTaxPTITaxLevel(pti PersonalTaxInfo) string {
 
 
 	return fmt.Sprintf(`{"tax": %.1f,"taxLevel": %s}`, taxVal, bodyStr)
+}
+func PersonalDeduct(amount float64) string {
+	retAmount := 70000.0
+	return fmt.Sprintf(`{"personalDeduction": %.1f}`, retAmount )
 }
 
 // func CalTaxPTI(pti PersonalTaxInfo) string {
