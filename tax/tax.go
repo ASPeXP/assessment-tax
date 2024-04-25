@@ -13,6 +13,7 @@ type PersonalTaxInfo struct {
 	Wht              float64
 	PersonalDeducted float64
 	Donation         float64
+	KReceipt float64
 }
 
 type TaxData struct {
@@ -85,7 +86,7 @@ func CalTaxPTITaxLevel(pti PersonalTaxInfo) string {
 	var bodyStr []string 
 	taxZero := 0.0
 
-	pti.Income = (pti.Income - pti.PersonalDeducted) - pti.Donation
+	pti.Income = (pti.Income - pti.PersonalDeducted) - pti.Donation - pti.KReceipt
 	taxVal := 0.0
 	
 	if pti.Income > 2000000 {
@@ -298,7 +299,7 @@ func CalTaxPTITaxLevel(pti PersonalTaxInfo) string {
 func CalTaxPTI(pti PersonalTaxInfo) string {
 
 	totalIncome := pti.Income
-	pti.Income = (pti.Income - pti.PersonalDeducted) - pti.Donation
+	pti.Income = (pti.Income - pti.PersonalDeducted) - pti.Donation - pti.KReceipt
 	
 	taxVal := 0.00
 	if pti.Income > 2000000 {
