@@ -35,18 +35,18 @@ func TestPOSTPersonalDeduction(t *testing.T) {
 
 	exp := amount
 		
-	deduction, err := p.GetDeduction()
+	deduction, err := p.GetPersonalDeduction()
 	if err != nil {
 		log.Fatal(err )
 	}
 	if deduction == (Deduction{}){
 		// return "no deduction available"
-		deduction, err = p.PostDeduction(amount)
+		deduction, err = p.PostPersonalDeduction(amount)
 		if err != nil {
 			log.Fatal(err )
 		}
 	}else{
-		deduction, err = p.UpdateDeduction(amount)
+		deduction, err = p.UpdatePersonalDeduction(amount)
 		if err != nil {
 			log.Fatal(err )
 		}

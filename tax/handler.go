@@ -23,7 +23,7 @@ func InsertPersonalDeduct(amount float64) string {
 		panic(err)
 	}
 
-	deduction, err := p.GetDeduction()
+	deduction, err := p.GetPersonalDeduction()
 	if err != nil {
 		return "error:" + err.Error()
 	}
@@ -35,12 +35,12 @@ func InsertPersonalDeduct(amount float64) string {
 	}
 	if deduction == (postgres.Deduction{}){
 		// return "no deduction available"
-		deduction, err = p.PostDeduction(amount)
+		deduction, err = p.PostPersonalDeduction(amount)
 		if err != nil {
 			return "error:" + err.Error()
 		}
 	}else{
-		deduction, err = p.UpdateDeduction(amount)
+		deduction, err = p.UpdatePersonalDeduction(amount)
 		if err != nil {
 			return "error:" + err.Error()
 		}
