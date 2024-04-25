@@ -3,6 +3,8 @@ package tax
 import (
 	"encoding/json"
 	"fmt"
+	"log"
+	"strconv"
 	"strings"
 	"testing"
 
@@ -540,6 +542,52 @@ func TestTaxWithAmount1000000WithResponseBody(t *testing.T) {
 	exp = strings.TrimSpace(exp)
 	if exp != bill {
 		t.Errorf("expect %q but got %q", exp, bill)
+	}
+
+	
+}
+
+func TestUploadCSV(t *testing.T) {
+	
+	text := ReadCSV()
+	var bill string 
+	for i, each_ln := range text {
+		if i == 0 {
+			continue
+		}
+
+		line_data := strings.Split(each_ln, ",")
+		income, err := strconv.ParseFloat(line_data[0], 64)
+		if err != nil {
+			log.Fatalf("failed to read line_data[0]")
+		}
+		wht, err := strconv.ParseFloat(line_data[1], 64)
+		if err != nil {
+			log.Fatalf("failed to read line_data[0]")
+		}
+		donation, err := strconv.ParseFloat(line_data[2], 64)
+		if err != nil {
+			log.Fatalf("failed to read line_data[0]")
+		}
+		var pti = PersonalTaxInfo{
+			Income:           income,
+			Wht:              wht,
+			PersonalDeducted: 60000.0,
+			Donation:         donation,
+		}
+		bill += CalTaxPTI(pti)
+	}
+	bill = bill[:len(bill)-1]
+	got:=fmt.Sprintf(`{"taxes": [%s]}`, bill)
+	
+	
+	exp := `{"taxes": [{"totalIncome": 500000.0,"tax": 29000.0},{"totalIncome": 600000.0,"tax": -2000.0},{"totalIncome": 750000.0,"tax": 11250.0}]}`
+
+	got = strings.TrimSpace(got)
+	exp = strings.ReplaceAll(exp, "\n", "")
+	exp = strings.TrimSpace(exp)
+	if exp != got {
+		t.Errorf("expect %q but got %q", exp, got)
 	}
 
 	

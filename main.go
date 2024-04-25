@@ -26,7 +26,11 @@ type Allowance struct {
  
 }
 
-
+type UploadBody struct {
+	TotalIncome float64 `json:"totalIncome"`
+  	Wht  float64 `json:"wht"`
+	Donation float64 `json:"donation"` 
+}
 type PDRequestBody struct {
 	Amount float64 `json:"amount"`
 }
@@ -74,6 +78,9 @@ func main() {
 		retStr := tax.InsertPersonalDeduct(pd.Amount)
 
 		return c.JSON(http.StatusOK,retStr)
+	})
+	e.POST("/tax/calculations/upload-csv", func( c echo.Context) error {
+		return c.JSON(http.StatusOK, "OK")
 	})
 
 	serverPort := ":" + os.Getenv("PORT")
