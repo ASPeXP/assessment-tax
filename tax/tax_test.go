@@ -550,12 +550,17 @@ func TestTaxWithAmount1000000WithResponseBody(t *testing.T) {
 func TestUploadCSV(t *testing.T) {
 	
 	text := ReadCSV("upload/taxes.csv")
+	if text == nil {
+		log.Fatalf("provided csv is empty.")
+	}
 	var bill string 
 	for i, each_ln := range text {
 		if i == 0 {
 			continue
 		}
-
+		if !strings.Contains(each_ln, ","){
+			log.Fatalf("provided csv not in correct format.")
+		}
 		line_data := strings.Split(each_ln, ",")
 		income, err := strconv.ParseFloat(line_data[0], 64)
 		if err != nil {
@@ -563,11 +568,11 @@ func TestUploadCSV(t *testing.T) {
 		}
 		wht, err := strconv.ParseFloat(line_data[1], 64)
 		if err != nil {
-			log.Fatalf("failed to read line_data[0]")
+			log.Fatalf("failed to read line_data[1]")
 		}
 		donation, err := strconv.ParseFloat(line_data[2], 64)
 		if err != nil {
-			log.Fatalf("failed to read line_data[0]")
+			log.Fatalf("failed to read line_data[2]")
 		}
 		var pti = PersonalTaxInfo{
 			Income:           income,

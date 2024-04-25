@@ -57,10 +57,18 @@ func InsertPersonalDeduct(amount float64) string {
 // }
 func GetTaxCSV(filePath string ) string {
 	text := ReadCSV(filePath)
+	if text == nil {
+		return "provided csv is empty."
+		
+	}
 	var bill string 
 	for i, each_ln := range text {
 		if i == 0 {
 			continue
+		}
+
+		if !strings.Contains(each_ln, ","){
+			return "provided csv not in correct format."
 		}
 
 		line_data := strings.Split(each_ln, ",")
