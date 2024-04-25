@@ -549,7 +549,7 @@ func TestTaxWithAmount1000000WithResponseBody(t *testing.T) {
 
 func TestUploadCSV(t *testing.T) {
 	
-	text := ReadCSV()
+	text := ReadCSV("upload/taxes.csv")
 	var bill string 
 	for i, each_ln := range text {
 		if i == 0 {

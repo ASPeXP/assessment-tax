@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"path/filepath"
 )
 
 type PersonalTaxInfo struct {
@@ -27,19 +28,34 @@ type TaxDataCSV struct {
 	TotalIncome float64 `json:"totalIncome"`
 	Tax float64 `json:"tax"`
 }
-func ReadCSV() []string {
-	file, err := os.Open("./upload/taxes.csv")
+func getCSVPath(filename string) (string, error){
+	root, err := os.Getwd()
 	if err != nil {
-		log.Fatalf("failed to open")
+		return "", err 
 	}
-	scanner := bufio.NewScanner(file)
-	scanner.Split(bufio.ScanLines)
-	var text []string 
-	for scanner.Scan(){
-		text = append(text, scanner.Text())
-	}
-	file.Close()
 
+	csvPath := filepath.Join(root, filename)
+	return csvPath, nil 
+}
+func ReadCSV(filePath string ) []string {
+		csvPath, err := getCSVPath(filePath)
+		if err != nil {
+			log.Printf("Failed to get CSV file path: %v", err )
+		}
+
+		file, err := os.Open(csvPath)
+		if err != nil {
+			log.Fatalf("Error: failed to open %v", err )
+		}
+		scanner := bufio.NewScanner(file)
+		scanner.Split(bufio.ScanLines)
+		var text []string 
+		for scanner.Scan(){
+			text = append(text, scanner.Text())
+		}
+	
+		file.Close()
+	
 	return text
 }
 func getLevelTax(tlv []TaxLevel) string {
@@ -278,216 +294,6 @@ func CalTaxPTITaxLevel(pti PersonalTaxInfo) string {
 
 	return fmt.Sprintf(`{"tax": %.1f,"taxLevel": %s}`, taxVal, bodyStr)
 }
-
-// func CalTaxPTICsv(pti PersonalTaxInfo) string {
-	
-// 	var tdc []TaxDataCSV
-// 	var bodyStr []string 
-// 	taxZero := 0.0
-
-// 	pti.Income = (pti.Income - pti.PersonalDeducted) - pti.Donation
-// 	taxVal := 0.0
-// 	totalIncome := pti.Income
-// 	if pti.Income > 2000000 {
-		
-// 		pti.Income = pti.Income - 2000000
-// 		tax := pti.Income * 0.35
-// 		taxVal += tax
-// 		tl := TaxDataCSV{
-// 			TotalIncome: totalIncome,
-// 			Tax: tax,
-// 		}
-// 		tdc = append(tdc, tl)
-
-// 		pti.Income = 2000000 - 1000000
-// 		tax = pti.Income * 0.20
-// 		taxVal += tax
-// 		tl = TaxDataCSV{
-// 			TotalIncome: totalIncome,
-// 			Tax: tax,
-// 		}
-// 		tdc = append(tdc, tl)
-
-// 		pti.Income = 1000000 - 500000
-// 		tax = pti.Income * 0.15
-// 		taxVal += tax
-// 		tl = TaxDataCSV{
-// 			TotalIncome: totalIncome,
-// 			Tax: tax,
-// 		}
-// 		tdc = append(tdc, tl)
-
-// 		pti.Income = 500000 - 150000
-// 		tax = pti.Income * 0.10
-// 		taxVal += tax
-// 		tl = TaxDataCSV{
-// 			TotalIncome: totalIncome,
-// 			Tax: tax,
-// 		}
-// 		tdc = append(tdc, tl)
-
-// 		tl = TaxDataCSV{
-// 			TotalIncome: totalIncome,
-// 			Tax: tax,
-// 		}
-// 		tdc = append(tdc, tl)
-		
-// 		taxVal -= pti.Wht
-
-// 		// bodyStr += getLevelTax(tlv)
-// 		// bodyStr = append(bodyStr, getLevelTax(tdc))
-// 		return fmt.Sprintf(`{"tax": %.1f,"taxLevel": %s}`, taxVal, bodyStr)
-// 	}
-
-// 	if pti.Income > 1000000 && pti.Income <= 2000000 {
-		
-
-// 		tl := TaxLevel{
-// 			Level: "2,000,001 ขึ้นไป",
-// 			Tax: 0.0,
-// 		}
-// 		tlv = append(tlv, tl)
-
-// 		pti.Income = pti.Income - 1000000
-// 		tax := pti.Income * 0.20
-// 		taxVal += tax
-// 		tl = TaxLevel{
-// 			Level: "1,000,001-2,000,000",
-// 			Tax: tax,
-// 		}
-// 		tlv = append(tlv, tl)
-
-// 		pti.Income = 1000000 - 500000
-// 		tax = pti.Income * 0.15
-// 		taxVal += tax
-// 		tl = TaxLevel{
-// 			Level: "500,001-1,000,000",
-// 			Tax: tax,
-// 		}
-// 		tlv = append(tlv, tl)
-
-// 		pti.Income = 500000 - 150000
-// 		tax = pti.Income * 0.10
-// 		taxVal += tax
-// 		taxVal -= pti.Wht
-// 		tl = TaxLevel{
-// 			Level: "150,001-500,000",
-// 			Tax: tax,
-// 		}
-// 		tlv = append(tlv, tl)
-
-// 		tl = TaxLevel{
-// 			Level: "0-150,000",
-// 			Tax: 0.0,
-// 		}
-// 		tlv = append(tlv, tl)
-// 		// bodyStr += getLevelTax(tlv)
-// 		bodyStr = append(bodyStr, getLevelTax(tlv))
-// 		return fmt.Sprintf(`{"tax": %.1f,"taxLevel": %s}`, taxVal, bodyStr)
-// 	}
-// 	if pti.Income > 500000 && pti.Income <= 1000000 {
-
-// 		tl := TaxLevel{
-// 			Level: "2,000,001 ขึ้นไป",
-// 			Tax: 0.0,
-// 		}
-// 		tlv = append(tlv, tl)
-
-// 		tl = TaxLevel{
-// 			Level: "1,000,001-2,000,000",
-// 			Tax: 0.0,
-// 		}
-// 		tlv = append(tlv, tl)
-
-// 		pti.Income = pti.Income - 500000
-// 		tax := pti.Income * 0.15
-// 		taxVal += tax
-// 		tl = TaxLevel{
-// 			Level: "500,001-1,000,000",
-// 			Tax: tax,
-// 		}
-// 		tlv = append(tlv, tl)
-
-// 		pti.Income = 500000 - 150000
-// 		tax = pti.Income * 0.10
-// 		taxVal += tax
-// 		taxVal -= pti.Wht
-// 		tl = TaxLevel{
-// 			Level: "150,001-500,000",
-// 			Tax: tax,
-// 		}
-// 		tlv = append(tlv, tl)
-
-		
-// 		tl = TaxLevel{
-// 			Level: "0-150,000",
-// 			Tax: 0.0,
-// 		}
-// 		tlv = append(tlv, tl)
-		
-
-// 		// bodyStr += getLevelTax(tlv)
-// 		bodyStr = append(bodyStr, getLevelTax(tlv))
-// 		return fmt.Sprintf(`{"tax": %.1f,"taxLevel": %s}`, taxVal, bodyStr)
-// 	}
-// 	if pti.Income > 150000 && pti.Income <= 500000 {
-	
-// 		tl := TaxLevel{
-// 			Level: "2,000,001 ขึ้นไป",
-// 			Tax: taxZero,
-// 		}
-// 		tlv = append(tlv, tl)
-
-// 		tl = TaxLevel{
-// 			Level: "1,000,001-2,000,000",
-// 			Tax: taxZero,
-// 		}
-// 		tlv = append(tlv, tl)
-
-// 		tl = TaxLevel{
-// 			Level: "500,001-1,000,000",
-// 			Tax: taxZero,
-// 		}
-// 		tlv = append(tlv, tl)
-
-// 		pti.Income = pti.Income - 150000
-// 		tax := pti.Income * 0.10
-// 		taxVal += tax
-// 		taxVal -= pti.Wht
-// 		tl = TaxLevel{
-// 			Level: "150,001-500,000",
-// 			Tax: tax,
-// 		}
-// 		tlv = append(tlv, tl)
-
-// 		tl = TaxLevel{
-// 		Level: "0-150,000",
-// 		Tax: taxZero,
-// 		}
-// 		tlv = append(tlv, tl)
-		
-// 		// bodyStr += getLevelTax(tlv)
-// 		bodyStr = append(bodyStr, getLevelTax(tlv))
-// 		return fmt.Sprintf(`{"tax": %.1f,"taxLevel": %s}`, taxVal, bodyStr)
-// 	}
-// 	if pti.Income <= 150000  {
-		
-// 		tax := 0.0
-// 		taxVal += tax
-// 		// taxVal -= pti.Wht
-// 		tl := TaxLevel{
-// 			Level: "0-150,000",
-// 			Tax: tax,
-// 		}
-// 		tlv = append(tlv, tl)
-// 		// bodyStr += getLevelTax(tlv)
-// 		bodyStr = append(bodyStr, getLevelTax(tlv))
-// 		return fmt.Sprintf(`{"tax": %.1f,"taxLevel": %s}`, taxVal, bodyStr)
-// 	}
-
-
-// 	return fmt.Sprintf(`{"tax": %.1f,"taxLevel": %s}`, taxVal, bodyStr)
-// }
 
 func CalTaxPTI(pti PersonalTaxInfo) string {
 
