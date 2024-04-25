@@ -97,6 +97,16 @@ func main() {
 
 		return c.JSON(http.StatusOK,retStr)
 	})
+	e.POST("/admin/deductions/k-receipt", func( c echo.Context) error {
+		var pd PDRequestBody 
+		err := c.Bind(&pd)
+		if err != nil {
+			return c.String(http.StatusBadRequest, err.Error()) 
+		}
+		retStr := tax.InsertKReceiptDeduct(pd.Amount)
+
+		return c.JSON(http.StatusOK,retStr)
+	})
 	e.POST("/tax/calculations/upload-csv", func( c echo.Context) error {
 		result := tax.GetTaxCSV("/tax/upload/taxes.csv")
 		
