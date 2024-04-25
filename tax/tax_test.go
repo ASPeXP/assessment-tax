@@ -547,6 +547,24 @@ func TestTaxWithAmount1000000WithResponseBody(t *testing.T) {
 	
 }
 
+func TestTaxAmount500000WithKReceipt(t *testing.T){
+	var pti = PersonalTaxInfo{
+			Income:           500000.0,
+			Wht:              0.00,
+			PersonalDeducted: 60000.0,
+			Donation:         100000.0,
+			KReceipt: 50000.0,
+
+		}
+	bill := CalTaxPTITaxLevel(pti)
+	exp := `{"tax": 14000.0,"taxLevel": [{"level": "2,000,001 ขึ้นไป","tax": 0.0},{"level": "1,000,001-2,000,000","tax": 0.0},{"level": "500,001-1,000,000","tax": 0.0},{"level": "150,001-500,000","tax": 14000.0},{"level": "0-150,000","tax": 0.0}]}`
+	bill = strings.TrimSpace(bill)
+	exp = strings.ReplaceAll(exp, "\n", "")
+	exp = strings.TrimSpace(exp)
+	if exp != bill {
+		t.Errorf("expect %q but got %q", exp, bill)
+	}
+}
 func TestUploadCSV(t *testing.T) {
 	
 	text := ReadCSV("upload/taxes.csv")
@@ -586,7 +604,7 @@ func TestUploadCSV(t *testing.T) {
 	got:=fmt.Sprintf(`{"taxes": [%s]}`, bill)
 	
 	
-	exp := `{"taxes": [{"totalIncome": 500000.0,"tax": 29000.0},{"totalIncome": 600000.0,"tax": -2000.0},{"totalIncome": 750000.0,"tax": 11250.0}]}`
+	exp := `{"taxes": [{"totalIncome": 500000.0,"tax": 29000.0},{"totalIncome": 600000.0,"tax": 0.0, "taxRefund": 2000.0},{"totalIncome": 750000.0,"tax": 11250.0}]}`
 
 	got = strings.TrimSpace(got)
 	exp = strings.ReplaceAll(exp, "\n", "")

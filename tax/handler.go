@@ -27,6 +27,12 @@ func InsertPersonalDeduct(amount float64) string {
 	if err != nil {
 		return "error:" + err.Error()
 	}
+	if amount > 100000 {
+		amount = 100000
+	}
+	if amount <= 10000 {
+		return "error: Amount must greater than 10000 THB."  
+	}
 	if deduction == (postgres.Deduction{}){
 		// return "no deduction available"
 		deduction, err = p.PostDeduction(amount)
@@ -41,20 +47,7 @@ func InsertPersonalDeduct(amount float64) string {
 	}
 	return fmt.Sprintf(`{"personalDeduction": %.1f }`, deduction.Amount)
 }
-// func getCSVPath(c echo.Context, fileName string ) (string, error){
-// 	root, err := os.Getwd()
-// 	if err != nil {
-// 		return "", err 
-// 	}
 
-// 	csvPath := filepath.Join(root, fileName)
-// 	mappedPath, err := c.MapPath(csvPath)
-// 	if err != nil {
-// 		return "", err 
-// 	}
-
-// 	return mappedPath, nil 
-// }
 func GetTaxCSV(filePath string ) string {
 	text := ReadCSV(filePath)
 	if text == nil {

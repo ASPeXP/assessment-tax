@@ -49,7 +49,7 @@ func main() {
 	e.GET("/", func(c echo.Context) error {
 		return c.String(http.StatusOK, "Hello, Go Bootcamp!")
 	})
-	e.POST("/tax/calculation", func( c echo.Context) error {
+	e.POST("/tax/calculations", func( c echo.Context) error {
 
 		var body RequestBody
 		err := c.Bind(&body)
@@ -57,15 +57,33 @@ func main() {
 			return c.String(http.StatusBadRequest, err.Error()) 
 		}
 
+		var deductAmount []float64
+		for _, bd := range body.Allowances{
+			if bd.Type == "k-receipt"{
+				if bd.Amount > 100000 {
+					deductAmount = append(deductAmount, 100000)
+				}
+				if bd.Amount <= 100000 && bd.Amount >= 1 {
+					deductAmount = append(deductAmount, bd.Amount )
+				}
+			}
+			if bd.Type == "donation" {
+				
+				deductAmount = append(deductAmount, bd.Amount )
+				
+			}
+		}
 		var pti = tax.PersonalTaxInfo{
 			Income: body.TotalIncome,
 			Wht: body.Wht,
 			PersonalDeducted: 60000.00,
-			Donation: body.Allowances[0].Amount,
+			Donation: deductAmount[1],
+			KReceipt:  deductAmount[0],
 		}
 		result := tax.TaxHandler(pti)
 		fmt.Println(result)
-		fmt.Printf("donation %.2f", pti.Donation)
+		fmt.Printf("donation %.1f", pti.Donation)
+		fmt.Printf("k-receipt %.1f", pti.KReceipt)
 		return c.JSON(http.StatusOK, result )
 		
 	})
@@ -81,37 +99,7 @@ func main() {
 	})
 	e.POST("/tax/calculations/upload-csv", func( c echo.Context) error {
 		result := tax.GetTaxCSV("/tax/upload/taxes.csv")
-		// result := "OK"
-	// 	text := tax.ReadCSV()
-	// var bill string 
-	// for i, each_ln := range text {
-	// 	if i == 0 {
-	// 		continue
-	// 	}
-
-	// 	line_data := strings.Split(each_ln, ",")
-
-	// 	income, err := strconv.ParseFloat(line_data[0], 64)
-	// 	if err != nil {
-	// 		return c.String(http.StatusBadRequest, err.Error()) 
-	// 	}
-	// 	wht, err := strconv.ParseFloat(line_data[1], 64)
-	// 	if err != nil {
-	// 		return c.String(http.StatusBadRequest, err.Error()) 
-	// 	}
-	// 	donation, err := strconv.ParseFloat(line_data[2], 64)
-	// 	if err != nil {
-	// 		return c.String(http.StatusBadRequest, err.Error()) 
-	// 	}
-	// 	var pti = tax.PersonalTaxInfo{
-	// 		Income:           income,
-	// 		Wht:              wht,
-	// 		PersonalDeducted: 60000.0,
-	// 		Donation:         donation,
-	// 	}
-	// 	bill += tax.CalTaxPTI(pti)
-	// }
-	// bill = bill[:len(bill)-1]
+		
 		return c.JSON(http.StatusOK, result)
 	})
 

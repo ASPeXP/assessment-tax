@@ -10,37 +10,7 @@ import (
 	_ "github.com/joho/godotenv/autoload"
 )
 
-// func PersonalDeduct(amount float64) string {
-// 	return fmt.Sprintf(`{"personalDeduction": %.1f}`, amount )
-// }
-// func TestPOSTPersonal(t *testing.T) {
 
-// 	t.Run("given personal deduct amount 10001 then can get return from database 10001", func(t *testing.T) {
-
-// 		amount := 10001.0
-
-// 		p, err := New()
-// 		if err != nil {
-// 			panic(err)
-// 		}
-
-// 		_, err = p.PostDeduction(amount)
-// 		if err != nil {
-// 			panic(err)
-// 		}
-
-// 		want := amount
-// 		pd, err := p.GetDeduction()
-// 		if err != nil {
-// 			panic(err)
-// 		}
-
-// 		got := pd.Amount
-// 		assert.Equal(t, want, got, "It's should return 10001.0 when I give 10001.0")
-
-// 	})
-
-// }
 func TestPOSTPersonalDeduction(t *testing.T) {
 		amount := 10001.0
 		userName := os.Getenv("ADMIN_USERNAME")
