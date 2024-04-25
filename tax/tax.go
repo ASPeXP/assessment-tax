@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"log"
+	"math"
 	"os"
 	"path/filepath"
 )
@@ -319,7 +320,15 @@ func CalTaxPTI(pti PersonalTaxInfo) string {
 		tax = pti.Income * 0.10
 		taxVal += tax
 		taxVal -= pti.Wht
-		return fmt.Sprintf(`{"totalIncome": %.1f,"tax": %.1f},`, totalIncome, taxVal)
+		var retStr string 
+		if taxVal >= 0 {
+			retStr = fmt.Sprintf(`{"totalIncome": %.1f,"tax": %.1f},`, totalIncome, taxVal)
+		}
+		if taxVal < 0 {
+			retStr = fmt.Sprintf(`{"totalIncome": %.1f,"tax": %.1f, "taxRefund": %.1f},`, totalIncome, 0.0, math.Abs(taxVal))
+		}
+
+		return retStr
 	}
 
 	if pti.Income > 1000000 && pti.Income <= 2000000 {
@@ -335,7 +344,15 @@ func CalTaxPTI(pti PersonalTaxInfo) string {
 		tax = pti.Income * 0.10
 		taxVal += tax
 		taxVal -= pti.Wht
-		return fmt.Sprintf(`{"totalIncome": %.1f,"tax": %.1f},`, totalIncome, taxVal)
+		var retStr string 
+		if taxVal >= 0 {
+			retStr = fmt.Sprintf(`{"totalIncome": %.1f,"tax": %.1f},`, totalIncome, taxVal)
+		}
+		if taxVal < 0 {
+			retStr = fmt.Sprintf(`{"totalIncome": %.1f,"tax": %.1f, "taxRefund": %.1f},`, totalIncome, 0.0, math.Abs(taxVal))
+		}
+
+		return retStr
 	}
 	if pti.Income > 500000 && pti.Income <= 1000000 {
 		pti.Income = pti.Income - 500000
@@ -346,19 +363,43 @@ func CalTaxPTI(pti PersonalTaxInfo) string {
 		tax = pti.Income * 0.10
 		taxVal += tax
 		taxVal -= pti.Wht
-		return fmt.Sprintf(`{"totalIncome": %.1f,"tax": %.1f},`, totalIncome, taxVal)
+		var retStr string 
+		if taxVal >= 0 {
+			retStr = fmt.Sprintf(`{"totalIncome": %.1f,"tax": %.1f},`, totalIncome, taxVal)
+		}
+		if taxVal < 0 {
+			retStr = fmt.Sprintf(`{"totalIncome": %.1f,"tax": %.1f, "taxRefund": %.1f},`, totalIncome, 0.0, math.Abs(taxVal))
+		}
+
+		return retStr
 	}
 	if pti.Income > 150000 && pti.Income <= 500000 {
 		pti.Income = pti.Income - 150000
 		tax := pti.Income * 0.10
 		taxVal += tax
 		taxVal -= pti.Wht
-		// return fmt.Sprintf(`{"tax": %.1f }`, taxVal)
-		return fmt.Sprintf(`{"totalIncome": %.1f,"tax": %.1f},`, totalIncome, taxVal)
+		
+		var retStr string 
+		if taxVal >= 0 {
+			retStr = fmt.Sprintf(`{"totalIncome": %.1f,"tax": %.1f},`, totalIncome, taxVal)
+		}
+		if taxVal < 0 {
+			retStr = fmt.Sprintf(`{"totalIncome": %.1f,"tax": %.1f, "taxRefund": %.1f},`, totalIncome, 0.0, math.Abs(taxVal))
+		}
+
+		return retStr
 	}
 
-	// return fmt.Sprintf(`{"tax": %.1f }`, taxVal)
-	return fmt.Sprintf(`{"totalIncome": %.1f,"tax": %.1f },`, totalIncome, taxVal)
+	// return fmt.Sprintf(`{"totalIncome": %.1f,"tax": %.1f },`, totalIncome, taxVal)
+	var retStr string 
+		if taxVal >= 0 {
+			retStr = fmt.Sprintf(`{"totalIncome": %.1f,"tax": %.1f},`, totalIncome, taxVal)
+		}
+		if taxVal < 0 {
+			retStr = fmt.Sprintf(`{"totalIncome": %.1f,"tax": %.1f, "taxRefund": %.1f},`, totalIncome, 0.0, math.Abs(taxVal))
+		}
+
+	return retStr
 }
 
 // func CalTax(amount float64, wht float64, personalDeducted float64) string {
