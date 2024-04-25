@@ -1,7 +1,11 @@
 package tax
 
 import (
+	"bufio"
 	"fmt"
+	"log"
+	"os"
+	"path/filepath"
 )
 
 type PersonalTaxInfo struct {
@@ -20,7 +24,40 @@ type TaxLevel struct {
 	Tax float64	`json:"tax"`
 }
 
+type TaxDataCSV struct {
+	TotalIncome float64 `json:"totalIncome"`
+	Tax float64 `json:"tax"`
+}
+func getCSVPath(filename string) (string, error){
+	root, err := os.Getwd()
+	if err != nil {
+		return "", err 
+	}
 
+	csvPath := filepath.Join(root, filename)
+	return csvPath, nil 
+}
+func ReadCSV(filePath string ) []string {
+		csvPath, err := getCSVPath(filePath)
+		if err != nil {
+			log.Printf("Failed to get CSV file path: %v", err )
+		}
+
+		file, err := os.Open(csvPath)
+		if err != nil {
+			log.Fatalf("Error: failed to open %v", err )
+		}
+		scanner := bufio.NewScanner(file)
+		scanner.Split(bufio.ScanLines)
+		var text []string 
+		for scanner.Scan(){
+			text = append(text, scanner.Text())
+		}
+	
+		file.Close()
+	
+	return text
+}
 func getLevelTax(tlv []TaxLevel) string {
 	var s string 
 	
@@ -32,6 +69,15 @@ func getLevelTax(tlv []TaxLevel) string {
 	// return s
 	
 }
+// func getTaxCSV(tdc []TaxDataCSV) string {
+// 	var s string 
+	
+// 	for _, t := range tdc {
+// 		s += fmt.Sprintf(`{"level": "%.1f","tax": %.1f},`,  t.TotalIncome, t.Tax)
+// 	}
+
+// 	return 	s[:len(s)-1]
+// }
 
 func CalTaxPTITaxLevel(pti PersonalTaxInfo) string {
 	
@@ -249,66 +295,70 @@ func CalTaxPTITaxLevel(pti PersonalTaxInfo) string {
 	return fmt.Sprintf(`{"tax": %.1f,"taxLevel": %s}`, taxVal, bodyStr)
 }
 
-// func CalTaxPTI(pti PersonalTaxInfo) string {
+func CalTaxPTI(pti PersonalTaxInfo) string {
 
-// 	pti.Income = (pti.Income - pti.PersonalDeducted) - pti.Donation
-// 	taxVal := 0.00
-// 	if pti.Income > 2000000 {
-// 		pti.Income = pti.Income - 2000000
-// 		tax := pti.Income * 0.35
-// 		taxVal += tax
+	totalIncome := pti.Income
+	pti.Income = (pti.Income - pti.PersonalDeducted) - pti.Donation
+	
+	taxVal := 0.00
+	if pti.Income > 2000000 {
+		pti.Income = pti.Income - 2000000
+		tax := pti.Income * 0.35
+		taxVal += tax
 
-// 		pti.Income = 2000000 - 1000000
-// 		tax = pti.Income * 0.20
-// 		taxVal += tax
+		pti.Income = 2000000 - 1000000
+		tax = pti.Income * 0.20
+		taxVal += tax
 
-// 		pti.Income = 1000000 - 500000
-// 		tax = pti.Income * 0.15
-// 		taxVal += tax
+		pti.Income = 1000000 - 500000
+		tax = pti.Income * 0.15
+		taxVal += tax
 
-// 		pti.Income = 500000 - 150000
-// 		tax = pti.Income * 0.10
-// 		taxVal += tax
-// 		taxVal -= pti.Wht
-// 		return fmt.Sprintf(`{"tax": %.2f }`, taxVal)
-// 	}
+		pti.Income = 500000 - 150000
+		tax = pti.Income * 0.10
+		taxVal += tax
+		taxVal -= pti.Wht
+		return fmt.Sprintf(`{"totalIncome": %.1f,"tax": %.1f},`, totalIncome, taxVal)
+	}
 
-// 	if pti.Income > 1000000 && pti.Income <= 2000000 {
-// 		pti.Income = pti.Income - 1000000
-// 		tax := pti.Income * 0.20
-// 		taxVal += tax
+	if pti.Income > 1000000 && pti.Income <= 2000000 {
+		pti.Income = pti.Income - 1000000
+		tax := pti.Income * 0.20
+		taxVal += tax
 
-// 		pti.Income = 1000000 - 500000
-// 		tax = pti.Income * 0.15
-// 		taxVal += tax
+		pti.Income = 1000000 - 500000
+		tax = pti.Income * 0.15
+		taxVal += tax
 
-// 		pti.Income = 500000 - 150000
-// 		tax = pti.Income * 0.10
-// 		taxVal += tax
-// 		taxVal -= pti.Wht
-// 		return fmt.Sprintf(`{"tax": %.2f }`, taxVal)
-// 	}
-// 	if pti.Income > 500000 && pti.Income <= 1000000 {
-// 		pti.Income = pti.Income - 500000
-// 		tax := pti.Income * 0.15
-// 		taxVal += tax
+		pti.Income = 500000 - 150000
+		tax = pti.Income * 0.10
+		taxVal += tax
+		taxVal -= pti.Wht
+		return fmt.Sprintf(`{"totalIncome": %.1f,"tax": %.1f},`, totalIncome, taxVal)
+	}
+	if pti.Income > 500000 && pti.Income <= 1000000 {
+		pti.Income = pti.Income - 500000
+		tax := pti.Income * 0.15
+		taxVal += tax
 
-// 		pti.Income = 500000 - 150000
-// 		tax = pti.Income * 0.10
-// 		taxVal += tax
-// 		taxVal -= pti.Wht
-// 		return fmt.Sprintf(`{"tax": %.2f }`, taxVal)
-// 	}
-// 	if pti.Income > 150000 && pti.Income <= 500000 {
-// 		pti.Income = pti.Income - 150000
-// 		tax := pti.Income * 0.10
-// 		taxVal += tax
-// 		taxVal -= pti.Wht
-// 		return fmt.Sprintf(`{"tax": %.2f }`, taxVal)
-// 	}
+		pti.Income = 500000 - 150000
+		tax = pti.Income * 0.10
+		taxVal += tax
+		taxVal -= pti.Wht
+		return fmt.Sprintf(`{"totalIncome": %.1f,"tax": %.1f},`, totalIncome, taxVal)
+	}
+	if pti.Income > 150000 && pti.Income <= 500000 {
+		pti.Income = pti.Income - 150000
+		tax := pti.Income * 0.10
+		taxVal += tax
+		taxVal -= pti.Wht
+		// return fmt.Sprintf(`{"tax": %.1f }`, taxVal)
+		return fmt.Sprintf(`{"totalIncome": %.1f,"tax": %.1f},`, totalIncome, taxVal)
+	}
 
-// 	return fmt.Sprintf(`{"tax": %.2f }`, taxVal)
-// }
+	// return fmt.Sprintf(`{"tax": %.1f }`, taxVal)
+	return fmt.Sprintf(`{"totalIncome": %.1f,"tax": %.1f },`, totalIncome, taxVal)
+}
 
 // func CalTax(amount float64, wht float64, personalDeducted float64) string {
 

@@ -26,7 +26,11 @@ type Allowance struct {
  
 }
 
-
+type UploadBody struct {
+	TotalIncome float64 `json:"totalIncome"`
+  	Wht  float64 `json:"wht"`
+	Donation float64 `json:"donation"` 
+}
 type PDRequestBody struct {
 	Amount float64 `json:"amount"`
 }
@@ -74,6 +78,41 @@ func main() {
 		retStr := tax.InsertPersonalDeduct(pd.Amount)
 
 		return c.JSON(http.StatusOK,retStr)
+	})
+	e.POST("/tax/calculations/upload-csv", func( c echo.Context) error {
+		result := tax.GetTaxCSV("/tax/upload/taxes.csv")
+		// result := "OK"
+	// 	text := tax.ReadCSV()
+	// var bill string 
+	// for i, each_ln := range text {
+	// 	if i == 0 {
+	// 		continue
+	// 	}
+
+	// 	line_data := strings.Split(each_ln, ",")
+
+	// 	income, err := strconv.ParseFloat(line_data[0], 64)
+	// 	if err != nil {
+	// 		return c.String(http.StatusBadRequest, err.Error()) 
+	// 	}
+	// 	wht, err := strconv.ParseFloat(line_data[1], 64)
+	// 	if err != nil {
+	// 		return c.String(http.StatusBadRequest, err.Error()) 
+	// 	}
+	// 	donation, err := strconv.ParseFloat(line_data[2], 64)
+	// 	if err != nil {
+	// 		return c.String(http.StatusBadRequest, err.Error()) 
+	// 	}
+	// 	var pti = tax.PersonalTaxInfo{
+	// 		Income:           income,
+	// 		Wht:              wht,
+	// 		PersonalDeducted: 60000.0,
+	// 		Donation:         donation,
+	// 	}
+	// 	bill += tax.CalTaxPTI(pti)
+	// }
+	// bill = bill[:len(bill)-1]
+		return c.JSON(http.StatusOK, result)
 	})
 
 	serverPort := ":" + os.Getenv("PORT")
