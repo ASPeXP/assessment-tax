@@ -53,11 +53,21 @@ K-Tax เป็น Application คำนวนภาษี ที่ให้ผ
 - **การ run program จะใช้คำสั่ง docker compose up เพื่อเตรียม environment และ go run main.go เพื่อ start api**
   - **หากต้องมีการใช้คำสั่งอื่น ๆ เพื่อทำให้โปรแกรมทำงานได้ จะไม่นับคะแนนหรือถูกหักคะแนน**
   - การตรวจจะทำการ export `env` ไว้ล่วงหน้าก่อนรัน ดังนี้
+  บน MacOS
 	- `export PORT=8080`
-	- `export DATABASE_URL={REPLACE_ME}`
+	- `export DATABASE_URL="host=localhost port=5432 user=$ADMIN_USERNAME password=$ADMIN_PASSWORD dbname=ktaxes sslmode=disable"`
 	- `export ADMIN_USERNAME=adminTax`
 	- `export ADMIN_PASSWORD=admin!`
+  บน Windows powershell
+  - `$env:PORT="8080"`
+  - `$env:ADMIN_USERNAME="adminTax"`
+  - `$env:ADMIN_PASSWORD="admin!"`
+  - `$env:DATABASE_URL="host=localhost port=5432 user=${env:ADMIN_USERNAME} password=${env:ADMIN_PASSWORD} dbname=ktaxes sslmode=disable"`
 - port ของ api จะต้องเป็น 8080
+
+## การทดสอบบน Docker
+- ทำการ build ด้วยคำสั่ง docker `build -t ktax . `
+- ทำการรัน ด้วยคำสั่ง `docker run --network=assessment-tax_default --env-file .env -p 8080:8080 ktax `
 
 ## Assumption
 

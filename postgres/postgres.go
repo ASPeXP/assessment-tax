@@ -2,7 +2,6 @@ package postgres
 
 import (
 	"database/sql"
-	"fmt"
 	"log"
 	"os"
 
@@ -17,9 +16,7 @@ type Postgres struct {
 
 func New() (*Postgres, error) {
 
-	connStr := "postgres://"+os.Getenv("ADMIN_USERNAME")+":"+os.Getenv("ADMIN_PASSWORD")+"@"+os.Getenv("host")+":"+os.Getenv("db_port")+"/"+os.Getenv("database_name")+"?sslmode=disable" 
-	fmt.Println(connStr)
-	db, err := sql.Open("postgres", connStr)
+	db, err := sql.Open("postgres", os.Getenv("DATABASE_URL"))
 	if err != nil {
 		log.Fatal(err)
 		return nil, err 
