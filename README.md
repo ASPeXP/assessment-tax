@@ -65,6 +65,10 @@ K-Tax เป็น Application คำนวนภาษี ที่ให้ผ
   - `$env:DATABASE_URL="host=localhost port=5432 user=${env:ADMIN_USERNAME} password=${env:ADMIN_PASSWORD} dbname=ktaxes sslmode=disable"`
 - port ของ api จะต้องเป็น 8080
 
+## การทดสอบบน Docker
+- ทำการ build ด้วยคำสั่ง docker `build -t ktax . `
+- ทำการรัน ด้วยคำสั่ง `docker run --network=assessment-tax_default --env-file .env -p 8080:8080 ktax `
+
 ## Assumption
 
 - รองรับแค่ปีเดียวคือ 2567
