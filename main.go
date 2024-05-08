@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fmt"
+	"encoding/json"
 	"log"
 	"net/http"
 	"os"
@@ -78,10 +78,12 @@ func main() {
 			KReceipt:         deductAmount[0],
 		}
 		result := tax.TaxHandler(pti)
-		fmt.Println(result)
-		fmt.Printf("donation %.1f", pti.Donation)
-		fmt.Printf("k-receipt %.1f", pti.KReceipt)
-		return c.JSON(http.StatusOK, result)
+		// fmt.Println(result)
+		// fmt.Printf("donation %.1f", pti.Donation)
+		// fmt.Printf("k-receipt %.1f", pti.KReceipt)
+		var data map[string]interface{}
+		json.Unmarshal([]byte(result), &data)
+		return c.JSON(http.StatusOK, data)
 
 	})
 	e.POST("/admin/deductions/personal", func(c echo.Context) error {
@@ -92,7 +94,9 @@ func main() {
 		}
 		retStr := tax.InsertPersonalDeduct(pd.Amount)
 
-		return c.JSON(http.StatusOK, retStr)
+		var data map[string]interface{}
+		json.Unmarshal([]byte(retStr), &data)
+		return c.JSON(http.StatusOK, data)
 	})
 	e.POST("/admin/deductions/k-receipt", func(c echo.Context) error {
 		var pd PDRequestBody
@@ -101,13 +105,15 @@ func main() {
 			return c.String(http.StatusBadRequest, err.Error())
 		}
 		retStr := tax.InsertKReceiptDeduct(pd.Amount)
-
-		return c.JSON(http.StatusOK, retStr)
+		var data map[string]interface{}
+		json.Unmarshal([]byte(retStr), &data)
+		return c.JSON(http.StatusOK, data)
 	})
 	e.POST("/tax/calculations/upload-csv", func(c echo.Context) error {
 		result := tax.GetTaxCSV("/tax/upload/taxes.csv")
-
-		return c.JSON(http.StatusOK, result)
+		var data map[string]interface{}
+		json.Unmarshal([]byte(result), &data)
+		return c.JSON(http.StatusOK, data)
 	})
 
 	serverPort := ":" + os.Getenv("PORT")
