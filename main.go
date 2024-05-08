@@ -2,10 +2,12 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
 	"os/signal"
+	"sort"
 	"syscall"
 
 	// "github.com/aspexp/assessment-tax/postgres"
@@ -33,6 +35,14 @@ type PDRequestBody struct {
 	Amount float64 `json:"amount"`
 }
 
+type TaxLevel struct {
+	Level string `json:"level`
+	Tax float64 `json:"tax"`
+}
+
+type TaxData struct {
+	TaxLevel []TaxLevel `json:"taxLevel"`
+}
 func main() {
 
 	e := echo.New()
@@ -78,12 +88,31 @@ func main() {
 			KReceipt:         deductAmount[0],
 		}
 		result := tax.TaxHandler(pti)
-		// fmt.Println(result)
+		
+		var data TaxData
+		err = json.Unmarshal([]byte(result), &data )
+		if err != nil {
+			fmt.Println("Error unmarshalling JSON:", err )
+			return c.JSON(http.StatusInternalServerError, err )
+		}
+
+		sort.Slice(data.TaxLevel, func(i, j int) bool {
+			return i > j 
+		})
+
+		reversedJSON, err := json.MarshalIndent(data, "", "  ")
+		if err != nil {
+			fmt.Println("Error mashalling JSON:", err )
+			return c.JSON(http.StatusInternalServerError, err )
+		}
 		// fmt.Printf("donation %.1f", pti.Donation)
 		// fmt.Printf("k-receipt %.1f", pti.KReceipt)
-		var data map[string]interface{}
-		json.Unmarshal([]byte(result), &data)
-		return c.JSON(http.StatusOK, data)
+		// var data map[string]interface{}
+		// json.Unmarshal([]byte(result), &data)
+		// return c.JSON(http.StatusOK, data)
+		var data1 map[string]interface{}
+		json.Unmarshal([]byte(reversedJSON), &data1)
+		return c.JSON(http.StatusOK, data1)
 
 	})
 	e.POST("/admin/deductions/personal", func(c echo.Context) error {
