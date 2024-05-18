@@ -11,8 +11,8 @@ import (
 )
 
 
-func TaxHandler(pmi PersonalTaxInfo) string {
-	return CalTaxPTITaxLevel(pmi)
+func TaxHandler(pti PersonalTaxInfo) string {
+	return CalTaxPTITaxLevel(pti)
 }
 func InsertPersonalDeduct(amount float64) string {
 
