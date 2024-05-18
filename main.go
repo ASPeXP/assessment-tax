@@ -14,6 +14,7 @@ import (
 	"github.com/aspexp/assessment-tax/tax"
 	_ "github.com/joho/godotenv/autoload"
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 )
 
 type RequestBody struct {
@@ -35,20 +36,36 @@ type PDRequestBody struct {
 	Amount float64 `json:"amount"`
 }
 
+type TaxData struct {
+	Tax F64 `json:"tax"`
+	TaxLevel []TaxLevel `json:"taxLevel"`
+	
+}
+
 type TaxLevel struct {
 	Level string `json:"level`
 	Tax float64 `json:"tax"`
 }
 
-type TaxData struct {
-	TaxLevel []TaxLevel `json:"taxLevel"`
+
+type F64 float64
+func (f *F64) UnmarshalJSON(b []byte) error {
+	var v float64
+	err := json.Unmarshal(b, &v)
+	if err != nil {
+		return err 
+	}
+	*f = F64(v)
+	return nil 
 }
+
+
 func main() {
 
 	e := echo.New()
 	// Middleware
 	// e.Use(middleware.Logger())
-	// e.Use(middleware.Recover())
+	e.Use(middleware.Recover())
 
 	stop := make(chan os.Signal, 1)
 	signal.Notify(stop, os.Interrupt, syscall.SIGTERM)
@@ -56,6 +73,7 @@ func main() {
 	e.GET("/", func(c echo.Context) error {
 		return c.String(http.StatusOK, "Hello, Go Bootcamp!")
 	})
+	
 	e.POST("/tax/calculations", func(c echo.Context) error {
 
 		var body RequestBody
@@ -65,37 +83,79 @@ func main() {
 		}
 
 		var deductAmount []float64
-		for _, bd := range body.Allowances {
-			if bd.Type == "k-receipt" {
-				if bd.Amount > 100000 {
-					deductAmount = append(deductAmount, 100000)
-				}
-				if bd.Amount <= 100000 && bd.Amount >= 1 {
-					deductAmount = append(deductAmount, bd.Amount)
-				}
-			}
-			if bd.Type == "donation" {
+		var pti tax.PersonalTaxInfo
+		if len(body.Allowances) == 1 {
+			for _, bd := range body.Allowances {
+						if bd.Type == "k-receipt" {
+							if bd.Amount > 50000.0 {
+								deductAmount = append(deductAmount, 50000.0)
+							}
+							if bd.Amount <= 50000 && bd.Amount >= 1 {
+								deductAmount = append(deductAmount, bd.Amount)
+							}
+								pti = tax.PersonalTaxInfo{
+								Income:           body.TotalIncome,
+								Wht:              body.Wht,
+								PersonalDeducted: 60000.0,
+								Donation:         0.0,
+								KReceipt:         deductAmount[0],
+							}
+						}
+						if bd.Type == "donation" {
 
-				deductAmount = append(deductAmount, bd.Amount)
+							if bd.Amount > 100000.0 {
+								deductAmount = append(deductAmount, 100000.0)
+							}
+							if bd.Amount <= 100000  {
+								deductAmount = append(deductAmount, bd.Amount)
+							}
 
-			}
+							pti = tax.PersonalTaxInfo{
+								Income:           body.TotalIncome,
+								Wht:              body.Wht,
+								PersonalDeducted: 60000.0,
+								Donation:         deductAmount[0],
+								KReceipt:         0.0,
+							}
+						}
+					}
+		}else{
+		// if len(body.Allowances) > 1 {
+			for _, bd := range body.Allowances {
+				if bd.Type == "k-receipt" {
+						if bd.Amount > 50000 {
+							deductAmount = append(deductAmount, 50000)
+						}
+						if bd.Amount <= 50000 && bd.Amount >= 1 {
+							deductAmount = append(deductAmount, bd.Amount)
+						}
+							
+					}
+					if bd.Type == "donation" {
+
+						deductAmount = append(deductAmount, bd.Amount)
+						
+					}
+				}
+			
+				 pti = tax.PersonalTaxInfo{
+						Income:           body.TotalIncome,
+						Wht:              body.Wht,
+						PersonalDeducted: 60000.0,
+						Donation:         deductAmount[1],
+						KReceipt:         deductAmount[0],
+					}
+					
 		}
-		var pti = tax.PersonalTaxInfo{
-			Income:           body.TotalIncome,
-			Wht:              body.Wht,
-			PersonalDeducted: 60000.00,
-			Donation:         deductAmount[1],
-			KReceipt:         deductAmount[0],
-		}
-		result := tax.TaxHandler(pti)
 		
+		result := tax.TaxHandler(pti)
 		var data TaxData
 		err = json.Unmarshal([]byte(result), &data )
+		// err = data.UnmarshalJSON([]byte(result) )
 		if err != nil {
 			fmt.Println("Error unmarshalling JSON:", err )
 			return c.JSON(http.StatusInternalServerError, err )
 		}
-
 		sort.Slice(data.TaxLevel, func(i, j int) bool {
 			return i > j 
 		})
@@ -105,14 +165,15 @@ func main() {
 			fmt.Println("Error mashalling JSON:", err )
 			return c.JSON(http.StatusInternalServerError, err )
 		}
-		// fmt.Printf("donation %.1f", pti.Donation)
-		// fmt.Printf("k-receipt %.1f", pti.KReceipt)
-		// var data map[string]interface{}
-		// json.Unmarshal([]byte(result), &data)
-		// return c.JSON(http.StatusOK, data)
+
+		// var data2 map[string]interface{}
+		// json.Unmarshal([]byte(result), &data2)
+		// return c.JSON(http.StatusOK, data2)
+
 		var data1 map[string]interface{}
 		json.Unmarshal([]byte(reversedJSON), &data1)
 		return c.JSON(http.StatusOK, data1)
+
 
 	})
 	e.POST("/admin/deductions/personal", func(c echo.Context) error {
